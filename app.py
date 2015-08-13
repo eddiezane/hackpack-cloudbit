@@ -1,6 +1,8 @@
 from flask import Flask, request
 from twilio.twiml import Response
 
+from cloudbit_utils import send_message
+
 app = Flask(__name__)
 
 
@@ -8,6 +10,7 @@ app = Flask(__name__)
 def sms_reply():
     message_body = request.form['Body']
     print message_body
+    send_message(message_body)
 
     res = Response()
     res.message('Thanks for texting our HackPack! After a bit of '
