@@ -60,6 +60,60 @@ String getLetter(int value) {
       return "E";
     case 175 ... 204:
       return "F";
+    case 205 ... 234:
+      return "G";
+    case 235 ... 264:
+      return "H";
+    case 265 ... 294:
+      return "I";
+    case 295 ... 324:
+      return "J";
+    case 325 ... 354:
+      return "K";
+    case 355 ... 384:
+      return "L";
+    case 385 ... 404:
+      return "M";
+    case 405 ... 434:
+      return "N";
+    case 435 ... 464:
+      return "O";
+    case 465 ... 494:
+      return "P";
+    case 495 ... 524:
+      return "Q";
+    case 525 ... 554:
+      return "R";
+    case 555 ... 584:
+      return "S";
+    case 585 ... 604:
+      return "T";
+    case 605 ... 634:
+      return "U";
+    case 635 ... 664:
+      return "V";
+    case 665 ... 694:
+      return "W";
+    case 695 ... 724:
+      return "X";
+    case 725 ... 754:
+      return "Y";
+    case 755 ... 784:
+      return "Z";
+    case 785 ... 804:
+      return " ";
+    case 805 ... 834:
+      return ".";
+    case 835 ... 864:
+      return "!";
+    case 865 ... 894:
+      return "?";
+    case 895 ... 924:
+      return "EOC";
+    case 925 ... 954:
+      return "EOF";
+    case 955 ... 204:
+      return "F";
     default:
       return "";
   }
@@ -85,15 +139,15 @@ void oldLoop() {
 
   drawLogo();
   delay(1200);
-  
+
   colorWipe(yellow, 15);
   drawPhone();
   delay(1200);
-  
+
 //  colorWipe(purple, 15);
 //  drawSMS();
 //  delay(1200);
-  
+
   crossFade(purple, teal, 15, 5);
 
   matrix.show();
@@ -121,12 +175,12 @@ void colorWipe(RGB color, uint8_t wait) {
 
 // Fade pixel (x, y) from startColor to endColor
 void fadePixel(int x, int y, RGB startColor, RGB endColor, int steps, int wait) {
-  for(int i = 0; i <= steps; i++) 
+  for(int i = 0; i <= steps; i++)
   {
      int newR = startColor.r + (endColor.r - startColor.r) * i / steps;
      int newG = startColor.g + (endColor.g - startColor.g) * i / steps;
      int newB = startColor.b + (endColor.b - startColor.b) * i / steps;
-     
+
      matrix.drawPixel(x, y, matrix.Color(newR, newG, newB));
      matrix.show();
      delay(wait);
@@ -140,7 +194,7 @@ void crossFade(RGB startColor, RGB endColor, int steps, int wait) {
      int newR = startColor.r + (endColor.r - startColor.r) * i / steps;
      int newG = startColor.g + (endColor.g - startColor.g) * i / steps;
      int newB = startColor.b + (endColor.b - startColor.b) * i / steps;
-     
+
      matrix.fillScreen(matrix.Color(newR, newG, newB));
      matrix.show();
      delay(wait);
@@ -148,9 +202,9 @@ void crossFade(RGB startColor, RGB endColor, int steps, int wait) {
 }
 
 void drawLogo() {
-  // This 8x8 array represents the LED matrix pixels. 
+  // This 8x8 array represents the LED matrix pixels.
   // A value of 1 means we’ll fade the pixel to white
-  int logo[8][8] = {  
+  int logo[8][8] = {
    {0, 0, 0, 0, 0, 0, 0, 0},
    {0, 1, 1, 0, 0, 1, 1, 0},
    {0, 1, 1, 0, 0, 1, 1, 0},
@@ -160,7 +214,7 @@ void drawLogo() {
    {0, 1, 1, 0, 0, 1, 1, 0},
    {0, 0, 0, 0, 0, 0, 0, 0}
   };
-   
+
   for(int row = 0; row < 8; row++) {
     for(int column = 0; column < 8; column++) {
      if(logo[row][column] == 1) {
@@ -171,9 +225,9 @@ void drawLogo() {
 }
 
 void drawLogoRound(){
-  // This 8x8 array represents the LED matrix pixels. 
+  // This 8x8 array represents the LED matrix pixels.
   // A value of 1 means we’ll fade the pixel to white
-  int logo[8][8] = {  
+  int logo[8][8] = {
    {0, 0, 0, 0, 0, 0, 0, 0},
    {0, 0, 1, 1, 1, 1, 0, 0},
    {0, 1, 0, 0, 0, 0, 1, 0},
@@ -183,20 +237,20 @@ void drawLogoRound(){
    {0, 0, 1, 1, 1, 1, 0, 0},
    {0, 0, 0, 0, 0, 0, 0, 0}
   };
-   
+
   for(int row = 0; row < 8; row++) {
     for(int column = 0; column < 8; column++) {
      if(logo[row][column] == 1) {
        fadePixel(column, row, purple, white, 30, 0);
      }
    }
-  } 
+  }
 }
 
 void drawPhone(){
-  // This 8x8 array represents the LED matrix pixels. 
+  // This 8x8 array represents the LED matrix pixels.
   // A value of 1 means we’ll fade the pixel to white
-  int logo[8][8] = {  
+  int logo[8][8] = {
    {0, 0, 0, 0, 0, 0, 0, 0},
    {0, 1, 1, 1, 1, 1, 1, 0},
    {1, 1, 1, 1, 1, 1, 1, 1},
@@ -206,20 +260,20 @@ void drawPhone(){
    {0, 1, 0, 0, 0, 0, 1, 0},
    {0, 1, 1, 1, 1, 1, 1, 0}
   };
-   
+
   for(int row = 0; row < 8; row++) {
     for(int column = 0; column < 8; column++) {
      if(logo[row][column] == 1) {
        fadePixel(column, row, purple, white, 8, 0);
      }
    }
-  } 
+  }
 }
 
 void drawSMS(){
-  // This 8x8 array represents the LED matrix pixels. 
+  // This 8x8 array represents the LED matrix pixels.
   // A value of 1 means we’ll fade the pixel to white
-  int logo[8][8] = {  
+  int logo[8][8] = {
    {1, 1, 1, 1, 1, 1, 1, 1},
    {1, 0, 0, 0, 0, 0, 0, 1},
    {1, 0, 0, 1, 1, 0, 0, 1},
@@ -229,24 +283,24 @@ void drawSMS(){
    {0, 0, 0, 0, 0, 1, 1, 0},
    {0, 0, 0, 0, 0, 0, 1, 0}
   };
-   
+
   for(int row = 0; row < 8; row++) {
     for(int column = 0; column < 8; column++) {
      if(logo[row][column] == 1) {
        fadePixel(column, row, purple, white, 30, 0);
      }
    }
-  } 
+  }
 }
 
 void scrollText(String textToDisplay) {
   int x = matrix.width();
   int pixelsInText = textToDisplay.length() * 7;
-  
+
   matrix.setCursor(x, 0);
   matrix.print(textToDisplay);
   matrix.show();
-  
+
   while(x > (matrix.width() - pixelsInText)) {
     matrix.fillScreen(matrix.Color(red.r, red.g, red.b));
     matrix.setCursor(--x, 0);
