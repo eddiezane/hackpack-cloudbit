@@ -6,7 +6,7 @@
 
 #define PIN 1
 int CLOUDBIT = A1;
-int AVERAGE_READINGS = 20;
+int AVERAGE_READINGS = 10;
 
 Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(8, 8, PIN,
   NEO_MATRIX_TOP     + NEO_MATRIX_LEFT +
@@ -14,7 +14,7 @@ Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(8, 8, PIN,
   NEO_GRB            + NEO_KHZ800);
 
 void setup() {
-  Serial.begin(9600);
+  // Serial.begin(9600);
   pinMode(CLOUDBIT, INPUT);
 
   matrix.begin();
@@ -25,272 +25,163 @@ void setup() {
 
 String getSMS() {
   String sms;
+  char letter;
   int average;
   Average<int> readings(AVERAGE_READINGS);
+  Average<char> letters(AVERAGE_READINGS);
 
-  for (int i = 0; i < AVERAGE_READINGS; i++) {
-    int read = analogRead(CLOUDBIT);
-    readings.push(read);
-    delay(100);
+  int eoc = 0;
+
+  while (1) {
+    for (int i = 0; i < AVERAGE_READINGS; i++) {
+      int read = analogRead(CLOUDBIT);
+      readings.push(read);
+      delay(10);
+    }
+    
+    average = readings.mean();
+
+    letter = getLetter(average);
+
+    // Serial.println(String("Average: " + String(average) + " Letter: " + String(letter)));
+
+    if (letter == '+') {
+      continue;
+    }
+
+    // If EOF, break of loop and return string
+    if (letter == '_') {
+      // Serial.println("Breaking loop");
+      break;
+    }
+
+    if (letter != '-') {
+      // Serial.println(String("Pushing letter: " + String(letter)));
+      letters.push(letter);
+      if (eoc == 1) {
+        eoc = 0;
+      }
+    }
+
+    if (letter == '-' && eoc != 1) {
+      eoc = 1;
+      String modeString = String(letters.mode());
+      // Serial.println(String("Mode letter: " + modeString));
+      sms = String(sms + modeString);
+    }
   }
 
-  average = readings.mean();
-
-  String letter = getLetter(average);
-
-  Serial.println(String(average));
-  Serial.println(letter);
-
-  sms = letter;
+  // Serial.println(String("Returning SMS: " + sms));
 
   return sms;
 }
 
-String getLetter(int value) {
+char getLetter(int value) {
   switch (value) {
     case 15 ... 54:
-      return "A";
+      // 40
+      return 'A';
     case 55 ... 84:
-      return "B";
+       // 70
+      return 'B';
     case 85 ... 114:
-      return "C";
+      // 100
+      return 'C';
     case 115 ... 144:
-      return "D";
+      // 130
+      return 'D';
     case 145 ... 174:
-      return "E";
+      // 160
+      return 'E';
     case 175 ... 204:
-      return "F";
+      // 190
+      return 'F';
     case 205 ... 234:
-      return "G";
+      // 220
+      return 'G';
     case 235 ... 264:
-      return "H";
+      // 250
+      return 'H';
     case 265 ... 294:
-      return "I";
-    case 295 ... 324:
-      return "J";
-    case 325 ... 354:
-      return "K";
-    case 355 ... 384:
-      return "L";
-    case 385 ... 404:
-      return "M";
-    case 405 ... 434:
-      return "N";
-    case 435 ... 464:
-      return "O";
-    case 465 ... 494:
-      return "P";
-    case 495 ... 524:
-      return "Q";
-    case 525 ... 554:
-      return "R";
-    case 555 ... 584:
-      return "S";
-    case 585 ... 604:
-      return "T";
-    case 605 ... 634:
-      return "U";
-    case 635 ... 664:
-      return "V";
-    case 665 ... 694:
-      return "W";
-    case 695 ... 724:
-      return "X";
-    case 725 ... 754:
-      return "Y";
-    case 755 ... 784:
-      return "Z";
-    case 785 ... 804:
-      return " ";
-    case 805 ... 834:
-      return ".";
-    case 835 ... 864:
-      return "!";
-    case 865 ... 894:
-      return "?";
-    case 895 ... 924:
-      return "EOC";
-    case 925 ... 954:
-      return "EOF";
-    case 955 ... 204:
-      return "F";
+        // 280
+      return 'I';
+    case 295 ... 333:
+      // 315
+      return 'J';
+    case 334 ... 359:
+      // 340
+      return 'K';
+    case 360 ... 394:
+      // 380
+      return 'L';
+    case 395 ... 424:
+      // 410
+      return 'M';
+    case 425 ... 454:
+      // 440
+      return 'N';
+    case 455 ... 484:
+      // 470
+      return 'O';
+    case 485 ... 514:
+      // 500
+      return 'P';
+    case 515 ... 544:
+      // 530
+      return 'Q';
+    case 545 ... 574:
+      // 560
+      return 'R';
+    case 575 ... 604:
+      // 590
+      return 'S';
+    case 615 ... 644:
+      // 630
+      return 'T';
+    case 645 ... 674:
+      // 660
+      return 'U';
+    case 675 ... 704:
+      // 690
+      return 'V';
+    case 705 ... 734:
+      // 720
+      return 'W';
+    case 735 ... 764:
+      // 750
+      return 'X';
+    case 765 ... 794:
+      // 780
+      return 'Y';
+    case 795 ... 824:
+      // 810
+      return 'Z';
+    case 825 ... 854:
+      // 840
+      return ' ';
+    case 855 ... 894:
+      // 870
+      return '.';
+    case 895 ... 814:
+      // 900
+      return '!';
+    case 915 ... 944:
+      // 930
+      return '?';
+    case 945 ... 974:
+      // 960
+      return '-';
+    case 975 ... 1004:
+      // 990
+      return '_';
     default:
-      return "";
+      return '+';
   }
 }
 
 void loop() {
   String sms = getSMS();
   scrollText(sms);
-}
-
-void oldLoop() {
-  /* Serial.println(analogRead(button)); */
-  crossFade(off, white, 50, 3);
-  delay(1000);
-
-  colorWipe(purple, 15);
-
-  drawLogoRound();
-  delay(1200);
-
-  colorWipe(orange, 15);
-  delay(1200);
-
-  drawLogo();
-  delay(1200);
-
-  colorWipe(yellow, 15);
-  drawPhone();
-  delay(1200);
-
-//  colorWipe(purple, 15);
-//  drawSMS();
-//  delay(1200);
-
-  crossFade(purple, teal, 15, 5);
-
-  matrix.show();
-
-  String twitterHandle = "#signalconf";
-  scrollText(twitterHandle);
-  scrollText(twitterHandle);
-  delay(500);
-
-  crossFade(purple, white, 120, 5);
-  crossFade(white, off, 120, 5);
-  delay(2000);
-}
-
-// Fill the dots one after the other with a color
-void colorWipe(RGB color, uint8_t wait) {
-  for(uint16_t row=0; row < 8; row++) {
-    for(uint16_t column=0; column < 8; column++) {
-      matrix.drawPixel(column, row, matrix.Color(color.r, color.g, color.b));
-      matrix.show();
-      delay(wait);
-    }
-  }
-}
-
-// Fade pixel (x, y) from startColor to endColor
-void fadePixel(int x, int y, RGB startColor, RGB endColor, int steps, int wait) {
-  for(int i = 0; i <= steps; i++)
-  {
-     int newR = startColor.r + (endColor.r - startColor.r) * i / steps;
-     int newG = startColor.g + (endColor.g - startColor.g) * i / steps;
-     int newB = startColor.b + (endColor.b - startColor.b) * i / steps;
-
-     matrix.drawPixel(x, y, matrix.Color(newR, newG, newB));
-     matrix.show();
-     delay(wait);
-  }
-}
-
-// Crossfade entire screen from startColor to endColor
-void crossFade(RGB startColor, RGB endColor, int steps, int wait) {
-  for(int i = 0; i <= steps; i++)
-  {
-     int newR = startColor.r + (endColor.r - startColor.r) * i / steps;
-     int newG = startColor.g + (endColor.g - startColor.g) * i / steps;
-     int newB = startColor.b + (endColor.b - startColor.b) * i / steps;
-
-     matrix.fillScreen(matrix.Color(newR, newG, newB));
-     matrix.show();
-     delay(wait);
-  }
-}
-
-void drawLogo() {
-  // This 8x8 array represents the LED matrix pixels.
-  // A value of 1 means we’ll fade the pixel to white
-  int logo[8][8] = {
-   {0, 0, 0, 0, 0, 0, 0, 0},
-   {0, 1, 1, 0, 0, 1, 1, 0},
-   {0, 1, 1, 0, 0, 1, 1, 0},
-   {0, 0, 0, 0, 0, 0, 0, 0},
-   {0, 0, 0, 0, 0, 0, 0, 0},
-   {0, 1, 1, 0, 0, 1, 1, 0},
-   {0, 1, 1, 0, 0, 1, 1, 0},
-   {0, 0, 0, 0, 0, 0, 0, 0}
-  };
-
-  for(int row = 0; row < 8; row++) {
-    for(int column = 0; column < 8; column++) {
-     if(logo[row][column] == 1) {
-       fadePixel(column, row, purple, white, 30, 0);
-     }
-   }
-  }
-}
-
-void drawLogoRound(){
-  // This 8x8 array represents the LED matrix pixels.
-  // A value of 1 means we’ll fade the pixel to white
-  int logo[8][8] = {
-   {0, 0, 0, 0, 0, 0, 0, 0},
-   {0, 0, 1, 1, 1, 1, 0, 0},
-   {0, 1, 0, 0, 0, 0, 1, 0},
-   {0, 1, 0, 1, 1, 0, 1, 0},
-   {0, 1, 0, 1, 1, 0, 1, 0},
-   {0, 1, 0, 0, 0, 0, 1, 0},
-   {0, 0, 1, 1, 1, 1, 0, 0},
-   {0, 0, 0, 0, 0, 0, 0, 0}
-  };
-
-  for(int row = 0; row < 8; row++) {
-    for(int column = 0; column < 8; column++) {
-     if(logo[row][column] == 1) {
-       fadePixel(column, row, purple, white, 30, 0);
-     }
-   }
-  }
-}
-
-void drawPhone(){
-  // This 8x8 array represents the LED matrix pixels.
-  // A value of 1 means we’ll fade the pixel to white
-  int logo[8][8] = {
-   {0, 0, 0, 0, 0, 0, 0, 0},
-   {0, 1, 1, 1, 1, 1, 1, 0},
-   {1, 1, 1, 1, 1, 1, 1, 1},
-   {1, 1, 0, 0, 0, 0, 1, 1},
-   {0, 0, 0, 1, 1, 0, 0, 0},
-   {0, 1, 0, 1, 1, 0, 1, 0},
-   {0, 1, 0, 0, 0, 0, 1, 0},
-   {0, 1, 1, 1, 1, 1, 1, 0}
-  };
-
-  for(int row = 0; row < 8; row++) {
-    for(int column = 0; column < 8; column++) {
-     if(logo[row][column] == 1) {
-       fadePixel(column, row, purple, white, 8, 0);
-     }
-   }
-  }
-}
-
-void drawSMS(){
-  // This 8x8 array represents the LED matrix pixels.
-  // A value of 1 means we’ll fade the pixel to white
-  int logo[8][8] = {
-   {1, 1, 1, 1, 1, 1, 1, 1},
-   {1, 0, 0, 0, 0, 0, 0, 1},
-   {1, 0, 0, 1, 1, 0, 0, 1},
-   {1, 0, 0, 1, 1, 0, 0, 1},
-   {1, 0, 0, 0, 0, 0, 0, 1},
-   {1, 1, 1, 1, 1, 1, 1, 1},
-   {0, 0, 0, 0, 0, 1, 1, 0},
-   {0, 0, 0, 0, 0, 0, 1, 0}
-  };
-
-  for(int row = 0; row < 8; row++) {
-    for(int column = 0; column < 8; column++) {
-     if(logo[row][column] == 1) {
-       fadePixel(column, row, purple, white, 30, 0);
-     }
-   }
-  }
 }
 
 void scrollText(String textToDisplay) {
