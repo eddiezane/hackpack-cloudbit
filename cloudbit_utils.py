@@ -46,18 +46,27 @@ char_map = {
 def send_message(message):
 
     for index, char in enumerate(message.lower()):
-        post_data = {'percent': char_map[char], 'duration_ms': -1}
+        post_data = {'percent': char_map[char], 'duration_ms': 1000}
         r = requests.post(cloudbit_url, data=post_data,
                           headers={'Authorization': 'Bearer ' + auth_token})
+        print "Sleeping"
         import time
         time.sleep(1)
+        print post_data
+        print "Request sent: " + r.text
+
+        post_data = {'percent': char_map['EOC'], 'duration_ms': -1}
+        r = requests.post(cloudbit_url, data=post_data,
+                          headers={'Authorization': 'Bearer ' + auth_token})
+        time.sleep(1)
+        print post_data
         print "Request sent: " + r.text
 
         if index == len(message) - 1:
             post_data = {'percent': char_map['EOF'], 'duration_ms': -1}
-        else:
-            post_data = {'percent': char_map['EOC'], 'duration_ms': -1}
+            r = requests.post(cloudbit_url, data=post_data,
+                              headers={'Authorization': 'Bearer ' + auth_token})
 
-        r = requests.post(cloudbit_url, data=post_data,
-                          headers={'Authorization': 'Bearer ' + auth_token})
-        print "Request sent: " + r.text
+            time.sleep(1)
+            print post_data
+            print "Request sent: " + r.text
